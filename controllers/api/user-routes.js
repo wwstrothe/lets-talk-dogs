@@ -25,11 +25,19 @@ router.post(
   passport.authenticate("local", {
     failureRedirect: "/login",
     successRedirect: "/",
-  })
+  }),
+  function (req, res) {
+    req.session.save(() => {
+      req.session.user_id = dbUserData.id;
+      req.session.username = dbUserData.username;
+      req.session.loggedIn = true;
+
+      res.json(dbUserData);
+    });
+  }
 );
 
 router.get("/logout", isAuth, (req, res, next) => {
-  console.log("======================");
   req.logout();
   res.redirect("/");
 });
@@ -72,18 +80,26 @@ router.get("/:id", (req, res) => {
 // POST /api/users
 router.post("/", (req, res) => {
   console.log("======================");
-    const saltHash = genPassword(req.body.password);
-    const salt = saltHash.salt;
-    const hash = saltHash.hash;
-    User.create({
+  const saltHash = genPassword(req.body.password);
+  const salt = saltHash.salt;
+  const hash = saltHash.hash;
+  User.create({
     username: req.body.username,
     email: req.body.email,
     hash: hash,
     salt: salt,
-    admin: true
+    admin: true,
   })
-    .then(dbUserData => res.json(dbUserData))
-    .catch(err => {
+    .then((dbUserData) => {
+      req.session.save(() => {
+        req.session.user_id = dbUserData.id;
+        req.session.username = dbUserData.username;
+        req.session.loggedIn = true;
+
+        res.json(dbUserData);
+      });
+    })
+    .catch((err) => {
       console.log(err);
       res.status(500).json(err);
     });
