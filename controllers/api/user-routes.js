@@ -8,6 +8,7 @@ const isAdmin = require("../../utils/auth").isAdmin;
 
 // GET /api/users
 router.get("/", (req, res) => {
+  console.log("======================");
   User.findAll({
     // attributes: { exclude: ['password'] }
   })
@@ -28,12 +29,14 @@ router.post(
 );
 
 router.get("/logout", isAuth, (req, res, next) => {
+  console.log("======================");
   req.logout();
   res.redirect("/");
 });
 
 // GET /api/users/:id
 router.get("/:id", (req, res) => {
+  console.log("======================");
   User.findOne({
     // attributes: { exclude: ['password'] },
     where: {
@@ -55,6 +58,7 @@ router.get("/:id", (req, res) => {
 
 // POST /api/users
 router.post("/", (req, res) => {
+  console.log("======================");
     const saltHash = genPassword(req.body.password);
     const salt = saltHash.salt;
     const hash = saltHash.hash;
@@ -74,6 +78,7 @@ router.post("/", (req, res) => {
 
 // PUT /api/users/:id
 router.put("/:id", isAuth, (req, res) => {
+  console.log("======================");
   User.update(req.body, {
     individualHooks: true,
     where: {
@@ -95,6 +100,7 @@ router.put("/:id", isAuth, (req, res) => {
 
 // DELETE /api/users/:id
 router.delete("/:id", isAdmin, (req, res) => {
+  console.log("======================");
   User.destroy({
     where: {
       id: req.params.id,
