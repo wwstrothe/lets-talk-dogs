@@ -41,13 +41,13 @@ app.use(express.urlencoded({ extended: true }));
 
 //The secret is defined in the .env file so it is kept secure
 const sess = {
-  secret: process.env.SECRET,
+  secret: "Happy Mowgli",
+  cookie: { maxAge: 1000 * 60 * 60 * 24 }, // one day max age
   resave: false,
   saveUninitialized: true,
   store: new SequelizeStore({
     db: sequelize,
   }),
-  cookie: { maxAge: 1000 * 60 * 60 * 24 }, // one day max age
 };
 
 // Tell the app to use Express Session for the session handling
@@ -60,7 +60,7 @@ app.use(passport.session());
 
 // Make the session values available
 app.use((req, res, next) => {
-  console.log(req.session);
+  // console.log(req.session);
   // console.log(req.user);
   next();
 });

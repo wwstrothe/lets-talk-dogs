@@ -5,6 +5,8 @@ const connection = require("../../config/connection");
 const { User, Dog, Appointment, Trainer } = require("../../models");
 const isAuth = require("../../utils/auth").isAuth;
 const isAdmin = require("../../utils/auth").isAdmin;
+const session = require("express-session");
+const SequelizeStore = require("connect-session-sequelize")(session.Store);
 
 // GET /api/users
 router.get("/", (req, res) => {
