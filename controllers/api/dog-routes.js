@@ -78,6 +78,18 @@ router.get("/:id", (req, res) => {
       {
         model: Appointment,
         attributes: ["startDate"],
+        include: {
+          model: User,
+          attributes: ['username']
+        }
+      },
+      {
+        model: Trainer,
+        attributes: ["id", "trainer_feedback", "created_at"],
+        include: {
+          model: User,
+          attributes: ["username"],
+        },
       },
     ],
   })
