@@ -1,0 +1,23 @@
+<ol class="post-list">
+  {{#each dogs as |dogs|}}
+  <li>
+    <article class="post">
+      <div class="title">
+        <h3>Name: {{ name }}</h3>
+        <p>Age: {{ age }}</p>
+        <p>Gender: {{ gender }}</p>
+        <p>Breed: {{ breed }}</p>
+        <p>Bio: {{ bio }}</p>
+        <p>Owner: {{user.username}}</p>
+      </div>
+      <div class="meta">
+        {{trainer.length}}
+        review(s) since
+        {{created_at}}
+        |
+        <a href="/dogs/{{id}}">{{trainers.length}} review(s)</a>
+      </div>
+    </article>
+  </li>
+  {{/each}}
+</ol>

@@ -1,3 +1,5 @@
+// path module
+const path = require("path");
 // dotenv file for sensitive configuration information
 require("dotenv").config();
 // Express.js server
@@ -7,7 +9,7 @@ const routes = require("./controllers/");
 // Sequelize connection to the database
 const sequelize = require("./config/connection");
 // Handlebars template engine for front-end
-// const exphbs = require("express-handlebars");
+const exphbs = require("express-handlebars");
 // Express session to handle session cookies
 const session = require("express-session");
 // Sequelize store to save the session so the user can remain logged in
@@ -16,12 +18,22 @@ const SequelizeStore = require("connect-session-sequelize")(session.Store);
 const passport = require("passport");
 const crypto = require("crypto");
 
+// Initialize handlebars for the html templates, using the custom helpers
+const hbs = exphbs.create({});
+
 require("dotenv").config();
 
 // Initialize the server
 const app = express();
 // Define the port for the server
 const PORT = process.env.PORT || 3001;
+
+// Give the server a path to the public directory for static files
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Set handlebars as the template engine for the server
+app.engine('handlebars', hbs.engine);
+app.set('view engine', 'handlebars');
 
 // Have Express parse JSON and string data
 app.use(express.json());
@@ -42,7 +54,7 @@ const sess = {
 app.use(session(sess));
 
 // Import the Passport config module, and initialize passport and the session
-require('./config/passport');
+require("./config/passport");
 app.use(passport.initialize());
 app.use(passport.session());
 
