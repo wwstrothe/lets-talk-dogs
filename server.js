@@ -1,9 +1,22 @@
+// dotenv file for sensitive configuration information
+require("dotenv").config();
 // Express.js server
 const express = require("express");
 // All routes as defined in the controllers folder
 const routes = require("./controllers/");
 // Sequelize connection to the database
 const sequelize = require("./config/connection");
+// Handlebars template engine for front-end
+// const exphbs = require("express-handlebars");
+// Express session to handle session cookies
+const session = require("express-session");
+// Sequelize store to save the session so the user can remain logged in
+const SequelizeStore = require("connect-session-sequelize")(session.Store);
+// Passport package for authentication, using application specific username and password
+const passport = require("passport");
+const crypto = require("crypto");
+
+require("dotenv").config();
 
 // Initialize the server
 const app = express();
@@ -13,6 +26,32 @@ const PORT = process.env.PORT || 3001;
 // Have Express parse JSON and string data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+//The secret is defined in the .env file so it is kept secure
+const sess = {
+  secret: process.env.SECRET,
+  resave: false,
+  saveUninitialized: true,
+  store: new SequelizeStore({
+    db: sequelize,
+  }),
+  cookie: { maxAge: 1000 * 60 * 60 * 24 }, // one day max age
+};
+
+// Tell the app to use Express Session for the session handling
+app.use(session(sess));
+
+// Import the Passport config module, and initialize passport and the session
+require('./config/passport');
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Make the session values available
+app.use((req, res, next) => {
+  console.log(req.session);
+  // console.log(req.user);
+  next();
+});
 
 // turn on routes
 app.use(routes);

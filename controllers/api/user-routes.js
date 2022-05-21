@@ -1,22 +1,41 @@
 const router = require("express").Router();
+const passport = require("passport");
+const genPassword = require("../../lib/passwordUtils").genPassword;
+const connection = require("../../config/connection");
 const { User } = require("../../models");
+const isAuth = require("../../utils/auth").isAuth;
+const isAdmin = require("../../utils/auth").isAdmin;
 
 // GET /api/users
 router.get("/", (req, res) => {
   User.findAll({
-    attributes: { exclude: ['password'] }
+    // attributes: { exclude: ['password'] }
   })
-    .then(dbUserData => res.json(dbUserData))
-    .catch(err => {
-      console.log(err);
-      res.status(500).json(err);
-    });
+  .then(dbUserData => res.json(dbUserData))
+  .catch(err => {
+    console.log(err);
+    res.status(500).json(err);
+  });
+});
+
+// POST /api/users/login
+router.post(
+  "/login",
+  passport.authenticate("local", {
+    failureRedirect: "/login",
+    successRedirect: "/home",
+  })
+);
+
+router.get("/logout", isAuth, (req, res, next) => {
+  req.logout();
+  res.redirect("/");
 });
 
 // GET /api/users/:id
 router.get("/:id", (req, res) => {
   User.findOne({
-    attributes: { exclude: ['password'] },
+    // attributes: { exclude: ['password'] },
     where: {
       id: req.params.id
     }
@@ -36,10 +55,15 @@ router.get("/:id", (req, res) => {
 
 // POST /api/users
 router.post("/", (req, res) => {
+    const saltHash = genPassword(req.body.password);
+    const salt = saltHash.salt;
+    const hash = saltHash.hash;
     User.create({
     username: req.body.username,
     email: req.body.email,
-    password: req.body.password
+    hash: hash,
+    salt: salt,
+    admin: true
   })
     .then(dbUserData => res.json(dbUserData))
     .catch(err => {
@@ -49,8 +73,9 @@ router.post("/", (req, res) => {
 });
 
 // PUT /api/users/:id
-router.put("/:id", (req, res) => {
+router.put("/:id", isAuth, (req, res) => {
   User.update(req.body, {
+    individualHooks: true,
     where: {
       id: req.params.id,
     },
@@ -69,7 +94,7 @@ router.put("/:id", (req, res) => {
 });
 
 // DELETE /api/users/:id
-router.delete("/:id", (req, res) => {
+router.delete("/:id", isAdmin, (req, res) => {
   User.destroy({
     where: {
       id: req.params.id,

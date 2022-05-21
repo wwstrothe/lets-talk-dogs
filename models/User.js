@@ -1,7 +1,7 @@
 // import Model class and DataTypes object from sequelize
 const { Model, DataTypes } = require('sequelize');
-//
-const sequelize = require('../config/connection')
+// Sequelize connection to the database
+const sequelize = require('../config/connection');
 
 // create User model
 class User extends Model {}
@@ -9,35 +9,42 @@ class User extends Model {}
 // define table columns and configurations
 User.init(
   {
-    id:{
+    id: {
       type: DataTypes.INTEGER,
       // must have a value
       allowNull: false,
       primaryKey: true,
-      autoIncrement: true
+      autoIncrement: true,
     },
     username: {
       type: DataTypes.STRING,
       allowNull: false,
       //username cannot be duplicated
       unique: true,
+      validate: {
+        notEmpty: true,
+      }
     },
     email: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
         // is email format email@service.com
-        isEmail: true
-      }
+        isEmail: true,
+      },
     },
-    password: {
-      type: DataTypes.STRING,
+    hash: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    salt: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    admin: {
+      type: DataTypes.BOOLEAN,
       allowNull: false,
-      validate: {
-        // at least 4 characters long
-        len: [4]
-      }
-    }
+    },
   },
   {
     //pass our imported sequelize connection
@@ -48,7 +55,7 @@ User.init(
     //don't pluralize name of db tables
     freezeTableName: true,
     underscored: true,
-    modelName: 'user'
+    modelName: "user",
   }
 );
 
