@@ -2,7 +2,7 @@ const router = require("express").Router();
 const passport = require("passport");
 const genPassword = require("../../lib/passwordUtils").genPassword;
 const connection = require("../../config/connection");
-const { User, Dog, Appointment } = require("../../models");
+const { User, Dog, Appointment, Trainer } = require("../../models");
 const isAuth = require("../../utils/auth").isAuth;
 const isAdmin = require("../../utils/auth").isAdmin;
 
@@ -40,29 +40,30 @@ router.get("/:id", (req, res) => {
   User.findOne({
     // attributes: { exclude: ['password'] },
     where: {
-      id: req.params.id
+      id: req.params.id,
     },
     include: [
       {
         model: Dog,
-        attributes: ['id', 'name', 'age']
+        attributes: ["id", "name", "age"],
       },
+
       {
         model: Dog,
-        attributes: ['name'],
+        attributes: ["name"],
         through: Appointment,
-        as: 'appointment_time'
-      }
-    ]
+        as: "appointment_time",
+      },
+    ],
   })
-    .then(dbUserData => {
+    .then((dbUserData) => {
       if (!dbUserData) {
-        res.status(404).json({ message: 'No user found with this id' });
+        res.status(404).json({ message: "No user found with this id" });
         return;
       }
       res.json(dbUserData);
     })
-    .catch(err => {
+    .catch((err) => {
       console.log(err);
       res.status(500).json(err);
     });

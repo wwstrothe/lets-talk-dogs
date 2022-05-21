@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { Dog, User, Appointment } = require('../../models');
+const { Dog, User, Appointment, Trainer } = require('../../models');
 const isAuth = require("../../utils/auth").isAuth;
 const sequelize = require('../../config/connection');
 
@@ -7,6 +7,7 @@ const sequelize = require('../../config/connection');
 router.get('/', (req, res) => {
   console.log('======================');
   Dog.findAll({
+    order: [["created_at", "DESC"]],
     attributes: [
       "id",
       "name",
@@ -22,7 +23,6 @@ router.get('/', (req, res) => {
         "appointment_time",
       ],
     ],
-    order: [["created_at", "DESC"]],
     include: [
       {
         model: User,
@@ -30,8 +30,16 @@ router.get('/', (req, res) => {
       },
       {
         model: Appointment,
-        attributes: ['startDate']
-      }
+        attributes: ["startDate"],
+      },
+      {
+        model: Trainer,
+        attributes: ['id', 'trainer_feedback', 'user_id', 'created_at'],
+        include: {
+          model: User,
+          attributes: ['username']
+        }
+      },
     ],
   })
     .then((dbDogData) => res.json(dbDogData))
