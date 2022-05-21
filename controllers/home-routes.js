@@ -49,22 +49,12 @@ router.get('/', (req, res) => {
     });
 })
 
+router.get("/login", (req, res) => {
+  res.render("login");
+});
 
-
-// router.get("/", (req, res) => {
-//   res.render("homepage", {
-//     id: 1,
-//     name: "Happy",
-//     age: 4,
-//     gender: "male",
-//     bio: "I'm a crazy boy",
-//     breed: "pittbull mix",
-//     trainer_feedback: 12,
-//     created_at: new Date(),
-//     user: {
-//       username: "wwstrothe",
-//     },
-//   });
-// });
+router.get("/signup", (req, res) => {
+  res.render("signup");
+});
 
 module.exports = router;
