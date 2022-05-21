@@ -2,7 +2,7 @@ const router = require("express").Router();
 const passport = require("passport");
 const genPassword = require("../../lib/passwordUtils").genPassword;
 const connection = require("../../config/connection");
-const { User } = require("../../models");
+const { User, Dog, Appointment } = require("../../models");
 const isAuth = require("../../utils/auth").isAuth;
 const isAdmin = require("../../utils/auth").isAdmin;
 
@@ -41,7 +41,19 @@ router.get("/:id", (req, res) => {
     // attributes: { exclude: ['password'] },
     where: {
       id: req.params.id
-    }
+    },
+    include: [
+      {
+        model: Dog,
+        attributes: ['id', 'name', 'age']
+      },
+      {
+        model: Dog,
+        attributes: ['name'],
+        through: Appointment,
+        as: 'appointment_time'
+      }
+    ]
   })
     .then(dbUserData => {
       if (!dbUserData) {

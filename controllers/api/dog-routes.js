@@ -1,18 +1,37 @@
 const router = require('express').Router();
-const { Dog, User } = require('../../models');
+const { Dog, User, Appointment } = require('../../models');
 const isAuth = require("../../utils/auth").isAuth;
+const sequelize = require('../../config/connection');
 
 // GET api/dogs 
 router.get('/', (req, res) => {
   console.log('======================');
   Dog.findAll({
-    attributes: ["id", "name", "age", "gender", "breed", "bio", "created_at"],
-    order: [['created_at', "DESC"]],
+    attributes: [
+      "id",
+      "name",
+      "age",
+      "gender",
+      "breed",
+      "bio",
+      "created_at",
+      [
+        sequelize.literal(
+          "(SELECT COUNT(*) FROM appointment WHERE dog.id = appointment.dog_id)"
+        ),
+        "appointment_time",
+      ],
+    ],
+    order: [["created_at", "DESC"]],
     include: [
       {
         model: User,
         attributes: ["username"],
       },
+      {
+        model: Appointment,
+        attributes: ['startDate']
+      }
     ],
   })
     .then((dbDogData) => res.json(dbDogData))
@@ -24,15 +43,33 @@ router.get('/', (req, res) => {
 
 // GET api/dogs/:id
 router.get("/:id", (req, res) => {
+  console.log("======================");
   Dog.findOne({
     where: {
       id: req.params.id,
     },
-    attributes: ["id", "name", "age", "gender", "breed", "bio"],
+    attributes: [
+      "id",
+      "name",
+      "age",
+      "gender",
+      "breed",
+      "bio",
+      [
+        sequelize.literal(
+          "(SELECT COUNT(*) FROM appointment WHERE dog.id = appointment.dog_id)"
+        ),
+        "appointment_time",
+      ],
+    ],
     include: [
       {
         model: User,
         attributes: ["username"],
+      },
+      {
+        model: Appointment,
+        attributes: ["startDate"],
       },
     ],
   })
@@ -51,6 +88,7 @@ router.get("/:id", (req, res) => {
 
 // POST api/dogs
 router.post("/", (req, res) => {
+  console.log("======================");
   Dog.create({
     name: req.body.name,
     age: req.body.age,
@@ -66,8 +104,43 @@ router.post("/", (req, res) => {
     });
 });
 
+// PUT /api/dogs/appointment
+router.put('/appointment', (req, res) => {
+  console.log("======================");
+  Appointment.create({
+    user_id: req.body.user_id,
+    dog_id: req.body.dog_id,
+    startDate: req.body.startDate,
+  }).then(() => {
+    return Dog.findOne({
+      where: {
+        id: req.body.dog_id
+      },
+      attributes: [
+        'id',
+        'name',
+        'age',
+        'gender',
+        'breed',
+        'bio',
+        'created_at'
+        [
+          sequelize.literal('(SELECT COUNT(*) FROM appointment WHERE dog.id = appointment.dog_id)'),
+          'appointment_time'
+        ]
+      ]
+    })
+    .then(dbDogData => res.json(dbDogData))
+    .catch(err => {
+      console.log(err);
+      res.status(400).json(err);
+    });
+  })
+})
+
 // PUT api/dogs/:id
 router.put("/:id", (req, res) => {
+  console.log("======================");
   Dog.update(req.body, {
       where: {
         id: req.params.id,
@@ -89,6 +162,7 @@ router.put("/:id", (req, res) => {
 
 // DELETE api/dogs/:id
 router.delete("/:id", (req, res) => {
+  console.log("======================");
   Dog.destroy({
     where: {
       id: req.params.id,
