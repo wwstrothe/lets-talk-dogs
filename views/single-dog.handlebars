@@ -12,7 +12,7 @@
     review(s) since
     {{dog.created_at}}
     |
-    <a href="/dogs/{{id}}">{{dog.trainers.length}} review(s)</a>
+    <a href="/dog/{{id}}">{{dog.trainers.length}} review(s)</a>
   </div>
 </article>
 
@@ -27,27 +27,16 @@
 </form>
 
 <div class="comments">
-  {{#each dog.trainer_feedback}}
+  {{#each trainer.trainer_feedback}}
   <section class="comment">
     <div class="meta">
       {{user.username}} on {{created_at}}
     </div>
     <div class="text">
-      {{trainer_feedback}}
+      {{trainer.trainer_feedback}}
     </div>
   </section>
   {{/each}}
 </div>
 
-{{!-- <article class="post">
-  <div class="title">
-    <a href="{{post.post_url}}" target="_blank">{{post.title}}</a>
-    <span>({{post.post_url}})</span>
-  </div>
-  <div class="meta">
-    {{post.vote_count}} point(s) by {{post.user.username}} on
-    {{post.created_at}}
-    |
-    <a href="/post/{{post.id}}">{{post.comments.length}} comment(s)</a>
-  </div>
-</article> --}}
+<script src="/js/feedback.js"></script>
