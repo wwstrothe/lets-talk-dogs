@@ -1,42 +1,17 @@
-<article class="post">
-  <div class="title">
-    <h3>Name: {{dog.name}}</h3>
-    <p>Age: {{dog.age}}</p>
-    <p>Gender: {{dog.gender}}</p>
-    <p>Breed: {{dog.breed}}</p>
-    <p>Bio: {{dog.bio}}</p>
-    <p>Owner: {{dog.user.username}}</p>
-  </div>
-  <div class="meta">
-    {{dog.comment.length}}
-    review(s) since
-    {{dog.created_at}}
-    |
-    <a href="/dog/{{id}}">{{dog.comment.length}} review(s)</a>
-  </div>
-</article>
+{{> dog-info dog }}
 
+{{#if loggedIn}}
 <form class="comment-form">
   <div>
     <textarea name="comment-body"></textarea>
   </div>
 
   <div>
-    <button type="submit">add feedback</button>
+    <button type="submit">add comment</button>
   </div>
 </form>
+{{/if}}
 
-<div class="comments">
-  {{#each comment.comment_text}}
-  <section class="comment">
-    <div class="meta">
-      {{user.username}} on {{created_at}}
-    </div>
-    <div class="text">
-      {{comment.comment_text}}
-    </div>
-  </section>
-  {{/each}}
-</div>
+{{> comments dog.comments}}
 
-<script src="/js/feedback.js"></script>
+<script src="/js/comment.js"></script>
