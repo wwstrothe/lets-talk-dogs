@@ -1,13 +1,9 @@
-<html lang="en">
+{{!-- <html lang="en">
 
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Doggy DayCare</title>
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
-    />
+    <title>Lets Talk Dogs</title>
     <link rel="stylesheet" href="/css/style.css" />
   </head>
 
@@ -15,14 +11,14 @@
     <div class="wrapper">
       <header>
         <h1>
-          <a href="/">Doggy Daycare</a>
+          <a href="/">Lets Talk Dogs!</a>
         </h1>
         <nav>
           {{#if loggedIn}}
-            <a href="/owners/dashboard">Dashboard</a>
-            <button id="logout" class="btn-no-style">Logout</button>
+          <a href="/dashboard">dashboard</a>
+          <button id="logout" class="btn-no-style">logout</button>
           {{else}}
-            <a href="/owners/login">Dog Owners Login</a>
+          <a href="/login">login</a>
           {{/if}}
         </nav>
       </header>
@@ -30,13 +26,54 @@
         {{{body}}}
       </main>
       <footer>
-        <h4>&copy; Doggy Daycare</h4>
+        Tell your dog I said hi!
       </footer>
     </div>
 
     {{#if loggedIn}}
-      <script src="/js/logout.js"></script>
+    <script src="/js/logout.js"></script>
     {{/if}}
   </body>
+
+</html> --}}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Doggy DayCare</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+  <div class="wrapper">
+    <header>
+      <h1>
+        <a href="/">Doggy Daycare</a>
+      </h1>
+      <nav>
+        {{#if loggedIn}}
+          <a href="/dashboard">Dashboard</a>
+          <button id="logout" class="btn-no-style">Logout</button>
+        {{else}}
+        <a href="/login">Dog Owners Login</a>
+        {{/if}}
+      </nav>
+    </header>
+    <main>
+      {{{ body }}}
+    </main>
+    <footer>
+      <h4>&copy; Doggy Daycare</h4>
+    </footer>
+  </div>
+  
+  {{#if loggedIn}}
+  <script src="/js/logout.js"></script>
+  {{/if}}
+</body>
 
 </html>
