@@ -8,11 +8,11 @@
     <p>Owner: {{dog.user.username}}</p>
   </div>
   <div class="meta">
-    {{dog.trainer.length}}
+    {{dog.comment.length}}
     review(s) since
     {{dog.created_at}}
     |
-    <a href="/dog/{{id}}">{{dog.trainers.length}} review(s)</a>
+    <a href="/dog/{{id}}">{{dog.comment.length}} review(s)</a>
   </div>
 </article>
 
@@ -27,13 +27,13 @@
 </form>
 
 <div class="comments">
-  {{#each trainer.trainer_feedback}}
+  {{#each comment.comment_text}}
   <section class="comment">
     <div class="meta">
       {{user.username}} on {{created_at}}
     </div>
     <div class="text">
-      {{trainer.trainer_feedback}}
+      {{comment.comment_text}}
     </div>
   </section>
   {{/each}}

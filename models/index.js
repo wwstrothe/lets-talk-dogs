@@ -1,7 +1,7 @@
 const User = require('./User');
 const Dog = require("./Dog");
 const Appointment = require('./Appointment');
-const Trainer = require('./Trainer')
+const Comment = require('./Comment')
 
 // create associations
 User.hasMany(Dog, {
@@ -40,21 +40,21 @@ Dog.hasMany(Appointment, {
   foreignKey: 'dog_id'
 })
 
-Trainer.belongsTo(User, {
+Comment.belongsTo(User, {
   foreignKey: 'user_id'
 });
 
-Trainer.belongsTo(Dog, {
+Comment.belongsTo(Dog, {
   foreignKey: 'dog_id'
 });
 
-User.hasMany(Trainer, {
+User.hasMany(Comment, {
   foreignKey: 'user_js'
 });
 
-Dog.hasMany(Trainer, {
+Dog.hasMany(Comment, {
   foreignKey: 'dog_id'
 });
 
 
-module.exports = { User, Dog, Appointment, Trainer };
+module.exports = { User, Dog, Appointment, Comment };

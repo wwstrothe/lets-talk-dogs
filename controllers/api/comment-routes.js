@@ -1,12 +1,12 @@
 const router = require("express").Router();
-const { Trainer } = require("../../models");
+const { Comment } = require("../../models");
 const sequelize = require("../../config/connection");
 // const isAdmin = require("../../utils/auth").isAdmin;
 
 router.get("/", (req, res) => {
   console.log("======================");
-  Trainer.findAll()
-    .then((dbTrainerData) => res.json(dbTrainerData))
+  Comment.findAll()
+    .then((dbCommentData) => res.json(dbCommentData))
     .catch((err) => {
       console.log(err);
       res.status(500).json(err);
@@ -15,12 +15,12 @@ router.get("/", (req, res) => {
 
 router.post("/", (req, res) => {
   console.log("======================");
-  Trainer.create({
-    trainer_feedback: req.body.trainer_feedback,
+  Comment.create({
+    comment_text: req.body.text,
     user_id: req.body.user_id,
     dog_id: req.body.dog_id
   })
-    .then(dbTrainerData => res.json(dbTrainerData))
+    .then(dbCommentData => res.json(dbCommentData))
     .catch(err => {
       console.log(err);
       res.status(400).json(err);
@@ -29,17 +29,17 @@ router.post("/", (req, res) => {
 
 router.delete("/:id", (req, res) => {
   console.log("======================");
-  Trainer.destroy({
+  Comment.destroy({
     where: {
       id: req.params.id,
     },
   })
-    .then((dbTrainerData) => {
-      if (!dbTrainerData) {
+    .then((dbCommentData) => {
+      if (!dbCommentData) {
         res.status(404).json({ message: "No post found with this id" });
         return;
       }
-      res.json(dbTrainerData);
+      res.json(dbCommentData);
     })
     .catch((err) => {
       console.log(err);

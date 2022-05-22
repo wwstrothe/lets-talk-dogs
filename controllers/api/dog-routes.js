@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { Dog, User, Appointment, Trainer } = require('../../models');
+const { Dog, User, Appointment, Comment } = require('../../models');
 const isAuth = require("../../utils/auth").isAuth;
 const sequelize = require('../../config/connection');
 
@@ -33,8 +33,8 @@ router.get('/', (req, res) => {
         attributes: ["startDate"],
       },
       {
-        model: Trainer,
-        attributes: ['id', 'trainer_feedback', 'user_id', 'created_at'],
+        model: Comment,
+        attributes: ['id', 'comment_text', 'user_id', 'created_at'],
         include: {
           model: User,
           attributes: ['username']
@@ -84,8 +84,8 @@ router.get("/:id", (req, res) => {
         }
       },
       {
-        model: Trainer,
-        attributes: ["id", "trainer_feedback", "created_at"],
+        model: Comment,
+        attributes: ["id", "comment_text", "created_at"],
         include: {
           model: User,
           attributes: ["username"],

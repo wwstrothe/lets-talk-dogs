@@ -1,7 +1,8 @@
 const seedUsers = require('./user-seed')
 const seedDogs = require('./dog-seed')
 const seedAppointments = require('./appointment-seed')
-const seedTrainers = require('./trainer-seed');
+const seedComments = require('./comment-seed');
+
 
 const sequelize = require("../config/connection");
 
@@ -14,7 +15,7 @@ const seedAll = async () => {
   console.log("----------------------");
   await seedAppointments();
   console.log("----------------------");
-  await seedTrainers();
+  await seedComments();
 
 
   process.exit(0);

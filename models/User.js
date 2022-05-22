@@ -1,9 +1,9 @@
 // import Model class and DataTypes object from sequelize
 const { Model, DataTypes } = require('sequelize');
-// Sequelize connection to the database
-const sequelize = require('../config/connection');
 // use bcrypt for password hashing
 const bcrypt = require("bcrypt");
+// Sequelize connection to the database
+const sequelize = require('../config/connection');
 
 // create User model
 class User extends Model {

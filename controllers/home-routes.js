@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const sequelize = require('../config/connection');
-const { User, Dog, Trainer, Appointment } = require('../models')
+const { User, Dog, Comment, Appointment } = require('../models')
 
 router.get('/', (req, res) => {
   console.log('======================');
@@ -31,8 +31,8 @@ router.get('/', (req, res) => {
         attributes: ["startDate"],
       },
       {
-        model: Trainer,
-        attributes: ['id', 'trainer_feedback', 'user_id', 'created_at'],
+        model: Comment,
+        attributes: ['id', 'comment_text', 'user_id', 'created_at'],
         include: {
           model: User,
           attributes: ['username']
@@ -94,8 +94,8 @@ router.get("/dog/:id", (req, res) => {
         attributes: ["startDate"],
       },
       {
-        model: Trainer,
-        attributes: ["id", "trainer_feedback", "user_id", "created_at"],
+        model: Comment,
+        attributes: ["id", "comment_text", "user_id", "created_at"],
         include: {
           model: User,
           attributes: ["username"],

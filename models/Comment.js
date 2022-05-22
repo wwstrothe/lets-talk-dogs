@@ -1,9 +1,9 @@
 const { Model, DataTypes } = require("sequelize");
 const sequelize = require("../config/connection");
 
-class Trainer extends Model {}
+class Comment extends Model {}
 
-Trainer.init(
+Comment.init(
   {
     id: {
       type: DataTypes.INTEGER,
@@ -12,7 +12,7 @@ Trainer.init(
       primaryKey: true,
       autoIncrement: true,
     },
-    trainer_feedback: {
+    comment_text: {
       type: DataTypes.TEXT,
       allowNull: false,
       validate: {
@@ -38,8 +38,8 @@ Trainer.init(
     sequelize,
     freezeTableName: true,
     underscored: true,
-    modelName: "trainer",
+    modelName: "comment",
   }
 );
 
-module.exports = Trainer
+module.exports = Comment
