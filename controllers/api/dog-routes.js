@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const { Dog, User, Appointment, Comment } = require('../../models');
-const isAuth = require("../../utils/auth").isAuth;
+const withAuth = require("../../utils/auth");
 const sequelize = require('../../config/connection');
 
 // GET api/dogs 
@@ -181,7 +181,7 @@ router.put("/:id", (req, res) => {
 });
 
 // DELETE api/dogs/:id
-router.delete("/:id", (req, res) => {
+router.delete("/:id", withAuth, (req, res) => {
   console.log("======================");
   Dog.destroy({
     where: {

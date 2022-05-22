@@ -18,7 +18,7 @@ Dog.init(
     },
     age: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: false,
     },
     gender: {
       type: DataTypes.STRING,
@@ -30,13 +30,16 @@ Dog.init(
     },
     bio: {
       type: DataTypes.TEXT,
-      allowNull: false
+      allowNull: false,
+      validate: {
+        len: [1],
+      },
     },
     user_id: {
       type: DataTypes.INTEGER,
       references: {
-        model: 'user',
-        key: 'id'
+        model: "user",
+        key: "id",
       },
     },
   },
@@ -44,7 +47,7 @@ Dog.init(
     sequelize,
     freezeTableName: true,
     underscored: true,
-    modelName: 'dog'
+    modelName: "dog",
   }
 );
 

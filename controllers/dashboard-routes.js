@@ -1,8 +1,9 @@
 const router = require('express').Router();
 const sequelize = require('../config/connection');
 const { User, Dog, Comment, Appointment } = require('../models')
+const withAuth = require('../utils/auth');
 
-router.get("/", (req, res) => {
+router.get("/", withAuth, (req, res) => {
     console.log(req.session);
     console.log("======================");
   Dog.findAll({
@@ -52,6 +53,65 @@ router.get("/", (req, res) => {
     })
     .catch((err) => {
       console.log(err);
+      res.status(500).json(err);
+    });
+});
+
+router.get('/edit/:id', (req, res) => {
+  console.log("======================");
+  Dog.findOne({
+    where: {
+      id: req.params.id
+    },
+    attributes: [
+      "id",
+      "name",
+      "age",
+      "gender",
+      "breed",
+      "bio",
+      [
+        sequelize.literal(
+          "(SELECT COUNT(*) FROM appointment WHERE dog.id = appointment.dog_id)"
+        ),
+        "appointment_time",
+      ],
+    ],
+    include: [
+      {
+        model: User,
+        attributes: ["username"],
+      },
+      {
+        model: Appointment,
+        attributes: ["startDate"],
+        include: {
+          model: User,
+          attributes: ["username"],
+        },
+      },
+      {
+        model: Comment,
+        attributes: ["id", "comment_text", "created_at"],
+        include: {
+          model: User,
+          attributes: ["username"],
+        },
+      },
+    ],
+  })
+    .then(dbDogData => {
+      if (dbDogData) {
+        const dog = dbDogData.get({ plain: true });
+        
+        res.render('edit-dog', { dog, loggedIn: true });
+      } else {
+        res.status(404).end();
+      }
+    })
+    .catch(err => {
+      console.log(err);
+      console.log('I HAVE BROKEN~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
       res.status(500).json(err);
     });
 });

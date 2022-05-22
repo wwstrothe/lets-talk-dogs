@@ -3,8 +3,8 @@ const passport = require("passport");
 // const genPassword = require("../../lib/passwordUtils").genPassword;
 const connection = require("../../config/connection");
 const { User, Dog, Appointment, Comment } = require("../../models");
-const withAuth = require("../../utils/auth").isAuth;
-const isAdmin = require("../../utils/auth").isAdmin;
+const withAuth = require("../../utils/auth");
+const isAdmin = require("../../utils/admin");
 const session = require("express-session");
 const SequelizeStore = require("connect-session-sequelize")(session.Store);
 
@@ -134,7 +134,7 @@ router.post("/login", (req, res) => {
 });
 
 // POST user logout
-router.post("/logout", (req, res) => {
+router.post("/logout", withAuth, (req, res) => {
   if (req.session.loggedIn) {
     req.session.destroy(() => {
       res.status(204).end();
@@ -167,7 +167,7 @@ router.put("/:id", (req, res) => {
 });
 
 // DELETE /api/users/:id
-router.delete("/:id", withAuth, (req, res) => {
+router.delete("/:id", isAdmin, (req, res) => {
   console.log("======================");
   User.destroy({
     where: {
