@@ -60,7 +60,7 @@ app.use(passport.session());
 
 // Make the session values available
 app.use((req, res, next) => {
-  // console.log(req.session);
+  console.log(req.session);
   // console.log(req.user);
   next();
 });

@@ -2,9 +2,15 @@
 const { Model, DataTypes } = require('sequelize');
 // Sequelize connection to the database
 const sequelize = require('../config/connection');
+// use bcrypt for password hashing
+const bcrypt = require("bcrypt");
 
 // create User model
-class User extends Model {}
+class User extends Model {
+  checkPassword(loginPw) {
+    return bcrypt.compareSync(loginPw, this.password);
+  }
+}
 
 // define table columns and configurations
 User.init(
@@ -23,7 +29,7 @@ User.init(
       unique: true,
       validate: {
         notEmpty: true,
-      }
+      },
     },
     email: {
       type: DataTypes.STRING,
@@ -33,20 +39,40 @@ User.init(
         isEmail: true,
       },
     },
-    hash: {
-        type: DataTypes.STRING,
-        allowNull: false,
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        len: [4],
+      },
     },
-    salt: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
+    // hash: {
+    //     type: DataTypes.STRING,
+    //     allowNull: false,
+    // },
+    // salt: {
+    //     type: DataTypes.STRING,
+    //     allowNull: false,
+    // },
     admin: {
       type: DataTypes.BOOLEAN,
-      defaultValue: false
+      defaultValue: false,
     },
   },
   {
+    hooks: {
+      async beforeCreate(newUserData) {
+        newUserData.password = await bcrypt.hash(newUserData.password, 10);
+        return newUserData;
+      },
+      async beforeUpdate(updatedUserData) {
+        updatedUserData.password = await bcrypt.hash(
+          updatedUserData.password,
+          10
+        );
+        return updatedUserData;
+      },
+    },
     //pass our imported sequelize connection
     sequelize,
     // false: don't automatically create

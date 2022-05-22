@@ -1,9 +1,9 @@
 const router = require("express").Router();
 const passport = require("passport");
-const genPassword = require("../../lib/passwordUtils").genPassword;
+// const genPassword = require("../../lib/passwordUtils").genPassword;
 const connection = require("../../config/connection");
 const { User, Dog, Appointment, Trainer } = require("../../models");
-const isAuth = require("../../utils/auth").isAuth;
+const withAuth = require("../../utils/auth").isAuth;
 const isAdmin = require("../../utils/auth").isAdmin;
 const session = require("express-session");
 const SequelizeStore = require("connect-session-sequelize")(session.Store);
@@ -21,33 +21,28 @@ router.get("/", (req, res) => {
   });
 });
 
-// POST /api/users/login
-router.post(
-  "/login",
-  passport.authenticate("local", {
-    failureRedirect: "/login",
-    successRedirect: "/",
-  }),
-  function (req, res) {
-    req.session.save(() => {
-      req.session.user_id = dbUserData.id;
-      req.session.username = dbUserData.username;
-      req.session.loggedIn = true;
+// // POST /api/users/login
+// router.post(
+//   "/login",
+//   passport.authenticate("local", {
+//     failureRedirect: "/login",
+//     successRedirect: "/",
+//   }),
+//   function (req, res) {
+//     req.session.save(() => {
+//       req.session.user_id = dbUserData.id;
+//       req.session.username = dbUserData.username;
+//       req.session.loggedIn = true;
 
-      res.json(dbUserData);
-    });
-  }
-);
+//       res.json(dbUserData);
+//     });
+//   }
+// );
 
-router.post("/logout", isAuth, (req, res) => {
-  if (req.session.loggedIn) {
-    req.session.destroy(() => {
-      res.status(204).end();
-    });
-  } else {
-    res.status(404).end();
-  }
-});
+// router.get("/logout", (req, res, next) => {
+//   req.logout();
+//   res.redirect("/");
+// });
 
 // GET /api/users/:id
 router.get("/:id", (req, res) => {
@@ -87,14 +82,15 @@ router.get("/:id", (req, res) => {
 // POST /api/users
 router.post("/", (req, res) => {
   console.log("======================");
-  const saltHash = genPassword(req.body.password);
-  const salt = saltHash.salt;
-  const hash = saltHash.hash;
+  // const saltHash = genPassword(req.body.password);
+  // const salt = saltHash.salt;
+  // const hash = saltHash.hash;
   User.create({
     username: req.body.username,
     email: req.body.email,
-    hash: hash,
-    salt: salt,
+    password: req.body.password,
+    // hash: hash,
+    // salt: salt,
     admin: true,
   })
     .then((dbUserData) => {
@@ -112,8 +108,44 @@ router.post("/", (req, res) => {
     });
 });
 
+// POST user login
+router.post("/login", (req, res) => {
+  User.findOne({
+    where: {
+      username: req.body.username,
+    },
+  }).then((dbUserData) => {
+    if (!dbUserData) {
+      res.status(400).json({ message: "No user with that username!" });
+      return;
+    }
+    const validPassword = dbUserData.checkPassword(req.body.password);
+    if (!validPassword) {
+      res.status(400).json({ message: "Incorrect password!" });
+      return;
+    }
+    req.session.save(() => {
+      req.session.user_id = dbUserData.id;
+      req.session.username = dbUserData.username;
+      req.session.loggedIn = true;
+      res.json({ user: dbUserData, message: "You are now logged in!" });
+    });
+  });
+});
+
+// POST user logout
+router.post("/logout", (req, res) => {
+  if (req.session.loggedIn) {
+    req.session.destroy(() => {
+      res.status(204).end();
+    });
+  } else {
+    res.status(404).end();
+  }
+});
+
 // PUT /api/users/:id
-router.put("/:id", isAuth, (req, res) => {
+router.put("/:id", (req, res) => {
   console.log("======================");
   User.update(req.body, {
     individualHooks: true,
@@ -135,7 +167,7 @@ router.put("/:id", isAuth, (req, res) => {
 });
 
 // DELETE /api/users/:id
-router.delete("/:id", isAdmin, (req, res) => {
+router.delete("/:id", withAuth, (req, res) => {
   console.log("======================");
   User.destroy({
     where: {
