@@ -42,7 +42,10 @@ router.get('/', (req, res) => {
   })
     .then(dbDogData => {
       const dogs = dbDogData.map(dog => dog.get({ plain: true }))
-      res.render("homepage", { dogs });
+      res.render("homepage", { 
+        dogs,
+        loggedIn: req.session.loggedIn
+      });
     })
     .catch((err) => {
       console.log(err);
@@ -110,7 +113,10 @@ router.get("/dog/:id", (req, res) => {
       }
       const dog = dbDogData.get({ plain: true });
 
-      res.render('single-dog', { dog });
+      res.render('single-dog', { 
+        dog,
+        loggedIn: req.session.loggedIn
+      });
     })
     .catch(err => {
       console.log(err);

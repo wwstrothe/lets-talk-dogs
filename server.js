@@ -41,10 +41,10 @@ const sess = {
 // Tell the app to use Express Session for the session handling
 app.use(session(sess));
 
-
+const helpers = require("./utils/helpers")
 
 // Initialize handlebars for the html templates, using the custom helpers
-const hbs = exphbs.create({});
+const hbs = exphbs.create({ helpers });
 
 // Import the Passport config module, and initialize passport and the session
 // require("./config/passport");
